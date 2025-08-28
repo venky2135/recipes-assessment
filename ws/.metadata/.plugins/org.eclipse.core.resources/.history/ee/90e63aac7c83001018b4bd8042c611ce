@@ -1,9 +1,0 @@
-package com.securin.recipes.dto;
-
-public record SearchRequest(
-  String calories,
-  String title,
-  String cuisine,
-  String total_time,
-  String rating
-) {}

@@ -1,3 +1,0 @@
--- Optional indexes for MySQL
-CREATE INDEX IF NOT EXISTS idx_recipes_rating ON recipes (rating);
-CREATE INDEX IF NOT EXISTS idx_recipes_cuisine ON recipes (cuisine);
