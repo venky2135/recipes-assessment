@@ -1,0 +1,132 @@
+/* Main layout */
+.main-container {
+    padding: 20px;
+    background: #fafafa;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  
+  /* Page Title */
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Filters row */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  
+  mat-form-field {
+    flex: 1 1 200px;
+    min-width: 200px;
+  }
+  
+  /* Buttons row */
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  /* Loading and Empty states */
+  .loading,
+  .empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    color: #777;
+    font-size: 1.1rem;
+  }
+  
+  .empty p {
+    margin: 0;
+  }
+  
+  /* Table */
+  .full-width {
+    width: 100%;
+    margin-top: 12px;
+  }
+  
+  .table-title {
+    font-weight: 500;
+    color: #1976d2;
+    cursor: pointer;
+  }
+  
+  .table-title:hover {
+    text-decoration: underline;
+  }
+  
+  /* Side drawer */
+  .drawer-content {
+    padding: 20px;
+    width: 350px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .drawer-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  
+  /* Key-value layout */
+  .kv {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 0.95rem;
+  }
+  
+  .kv label {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .kv div {
+    color: #333;
+  }
+  
+  /* Sections */
+  .section {
+    margin-top: 20px;
+  }
+  
+  .section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #444;
+  }
+  
+  /* Nutrient table */
+  .section table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  
+  .section td {
+    padding: 4px 6px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .section td:first-child {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .desc {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.5;
+  }
+  
