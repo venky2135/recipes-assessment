@@ -1,0 +1,37 @@
+package com.securin.recipes.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.util.Map;
+
+@Entity
+@Table(name = "recipes")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Recipe {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String cuisine;
+    private String title;
+    private Double rating;
+    private String prepTime;
+    private String cookTime;
+    private String totalTime;
+
+    @Column(length = 2000)
+    private String description;
+
+    // nutrients is stored as JSON in DB
+    @Convert(converter = com.vladmihalcea.hibernate.type.json.JsonType.class)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> nutrients;
+
+    // 👇 Changed from Integer → String
+    private String serves;
+}

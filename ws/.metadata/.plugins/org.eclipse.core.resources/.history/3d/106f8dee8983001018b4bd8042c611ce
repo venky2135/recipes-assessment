@@ -1,0 +1,35 @@
+package com.securin.recipes.service;
+
+import com.securin.recipes.dto.RecipeDto;
+import com.securin.recipes.dto.SearchRequest;
+import com.securin.recipes.entity.Recipe;
+import com.securin.recipes.repository.RecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class RecipeService {
+
+    @Autowired
+    private RecipeRepository repo;
+
+    // Paginated listing
+    public Page<RecipeDto> list(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return repo.findAll(pageable).map(RecipeDto::fromEntity);
+    }
+
+    // Search with simple query (can be extended later)
+    public List<RecipeDto> search(SearchRequest request, int size) {
+        String query = request.getQuery() == null ? "" : request.getQuery().trim();
+        Pageable pageable = PageRequest.of(0, size);
+
+        return repo.findByTitleContainingIgnoreCase(query, pageable)
+                   .stream()
+                   .map(RecipeDto::fromEntity)
+                   .toList();
+    }
+}

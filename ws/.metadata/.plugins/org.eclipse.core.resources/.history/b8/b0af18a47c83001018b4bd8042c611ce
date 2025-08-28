@@ -1,0 +1,66 @@
+package com.securin.recipes.dto;
+
+import com.securin.recipes.entity.Recipe;
+
+import java.util.Map;
+
+public class RecipeDto {
+
+    private Long id;
+    private String cuisine;
+    private String title;
+    private Double rating;
+    private Integer prep_time;
+    private Integer cook_time;
+    private Integer total_time;
+    private String description;
+    private Map<String, String> nutrients;
+    private String serves;
+
+    // --- Mapper ---
+    public static RecipeDto from(Recipe r) {
+        RecipeDto dto = new RecipeDto();
+        dto.id = r.getId();
+        dto.cuisine = r.getCuisine();
+        dto.title = r.getTitle();
+        dto.rating = r.getRating();
+        dto.prep_time = r.getPrepTime();
+        dto.cook_time = r.getCookTime();
+        dto.total_time = r.getTotalTime();
+        dto.description = r.getDescription();
+        dto.nutrients = r.getNutrients();
+        dto.serves = r.getServes();
+        return dto;
+    }
+
+    // --- Getters & Setters ---
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getCuisine() { return cuisine; }
+    public void setCuisine(String cuisine) { this.cuisine = cuisine; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public Double getRating() { return rating; }
+    public void setRating(Double rating) { this.rating = rating; }
+
+    public Integer getPrep_time() { return prep_time; }
+    public void setPrep_time(Integer prep_time) { this.prep_time = prep_time; }
+
+    public Integer getCook_time() { return cook_time; }
+    public void setCook_time(Integer cook_time) { this.cook_time = cook_time; }
+
+    public Integer getTotal_time() { return total_time; }
+    public void setTotal_time(Integer total_time) { this.total_time = total_time; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Map<String, String> getNutrients() { return nutrients; }
+    public void setNutrients(Map<String, String> nutrients) { this.nutrients = nutrients; }
+
+    public String getServes() { return serves; }
+    public void setServes(String serves) { this.serves = serves; }
+}

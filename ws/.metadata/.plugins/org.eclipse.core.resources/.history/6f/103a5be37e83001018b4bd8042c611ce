@@ -1,0 +1,61 @@
+package com.securin.recipes.util;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securin.recipes.entity.Recipe;
+import com.securin.recipes.repository.RecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Component
+public class RecipeDataLoader {
+
+    @Autowired
+    private RecipeRepository repo;
+
+    @PostConstruct
+    public void init() {
+        loadData();
+    }
+
+    private void loadData() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            File file = new ClassPathResource("data/US_recipes.json").getFile();
+            JsonNode root = mapper.readTree(file);
+
+            List<Recipe> recipes = new ArrayList<>();
+
+            if (root.isArray()) {
+                // ✅ Case 1: JSON is an array [ {...}, {...} ]
+                recipes = mapper.convertValue(root, new TypeReference<List<Recipe>>() {});
+            } else if (root.isObject()) {
+                // ✅ Case 2: JSON is an object { "0": {...}, "1": {...} }
+                Map<String, Recipe> recipeMap = mapper.convertValue(root, new TypeReference<Map<String, Recipe>>() {});
+                recipes = new ArrayList<>(recipeMap.values());
+            }
+
+            // Save only if DB is empty
+            if (repo.count() == 0 && !recipes.isEmpty()) {
+                repo.saveAll(recipes);
+                System.out.println("✅ Loaded " + recipes.size() + " recipes into DB.");
+            } else {
+                System.out.println("ℹ️ Recipes already exist in DB. Skipping load.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

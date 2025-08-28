@@ -1,0 +1,53 @@
+package com.securin.recipes.dto;
+
+import com.securin.recipes.entity.Recipe;
+import java.util.Map;
+
+@SuppressWarnings("unchecked")
+public record RecipeDto(
+    Long id,
+    String cuisine,
+    String title,
+    Double rating,
+    Integer prep_time,
+    Integer cook_time,
+    Integer total_time,
+    String description,
+    Map<String, Object> nutrients,
+    String serves
+) {
+
+    // ✅ Map from JPA entity
+    public static RecipeDto from(Recipe r) {
+        if (r == null) return null;
+        return new RecipeDto(
+            r.getId(),
+            r.getCuisine(),
+            r.getTitle(),
+            r.getRating(),
+            r.getPrep_time(),
+            r.getCook_time(),
+            r.getTotal_time(),
+            r.getDescription(),
+            r.getNutrients(),
+            r.getServes()
+        );
+    }
+
+    // ✅ Map from native SQL / Object[] row
+    public static RecipeDto from(Object[] row) {
+        if (row == null) return null;
+        return new RecipeDto(
+            row[0] != null ? ((Number) row[0]).longValue() : null,      // id
+            (String) row[1],                                           // cuisine
+            (String) row[2],                                           // title
+            row[3] != null ? ((Number) row[3]).doubleValue() : null,   // rating
+            row[4] != null ? ((Number) row[4]).intValue() : null,      // prep_time
+            row[5] != null ? ((Number) row[5]).intValue() : null,      // cook_time
+            row[6] != null ? ((Number) row[6]).intValue() : null,      // total_time
+            (String) row[7],                                           // description
+            row[8] != null ? (Map<String, Object>) row[8] : null,      // nutrients
+            (String) row[9]                                            // serves
+        );
+    }
+}

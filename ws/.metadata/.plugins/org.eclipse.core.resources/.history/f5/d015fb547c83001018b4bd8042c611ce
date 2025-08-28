@@ -1,0 +1,41 @@
+package com.securin.recipes.controller;
+
+import com.securin.recipes.dto.PageResponse;
+import com.securin.recipes.dto.RecipeDto;
+import com.securin.recipes.dto.SearchRequest;
+import com.securin.recipes.service.RecipeService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
+public class RecipeController {
+  private final RecipeService service;
+
+  @GetMapping("/recipes")
+  public ResponseEntity<PageResponse<RecipeDto>> getAll(
+      @RequestParam(defaultValue = "1") @Min(1) int page,
+      @RequestParam(defaultValue = "15") @Min(1) @Max(100) int limit) {
+    return ResponseEntity.ok(service.list(page, limit));
+  }
+
+  @GetMapping("/recipes/search")
+  public ResponseEntity<Map<String, List<RecipeDto>>> search(
+      @RequestParam(required = false) String calories,
+      @RequestParam(required = false) String title,
+      @RequestParam(required = false) String cuisine,
+      @RequestParam(required = false, name="total_time") String totalTime,
+      @RequestParam(required = false) String rating,
+      @RequestParam(defaultValue = "100") @Min(1) @Max(1000) int limit) {
+    SearchRequest req = new SearchRequest(calories, title, cuisine, totalTime, rating);
+    return ResponseEntity.ok(Map.of("data", service.search(req, limit)));
+  }
+}

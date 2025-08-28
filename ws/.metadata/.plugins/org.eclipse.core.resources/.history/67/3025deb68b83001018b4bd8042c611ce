@@ -1,0 +1,51 @@
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.criteria.*;
+import org.hibernate.query.sqm.function.SelfRenderingSqmFunction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.Optional;
+
+// ... other imports and class definition
+
+@Service
+public class RecipeService {
+    // ... existing code
+
+    private Specification<Recipe> addNumericFilter(Map<String, String> filters, String param, String col) {
+        return (root, query, cb) -> {
+            String filterVal = filters.get(param);
+            if (filterVal == null || filterVal.isEmpty()) {
+                return null;
+            }
+
+            String op = filterVal.substring(0, 2);
+            double val = Double.parseDouble(filterVal.substring(2));
+
+            Expression<String> expression;
+            if (col.equals("nutrients->>calories")) {
+                expression = cb.function("JSON_VALUE", String.class, root.get("nutrients"), cb.literal("$." + col.split("->>")[1]));
+            } else {
+                expression = root.get(col);
+            }
+            
+            Expression<Double> numericExpression = cb.function("CAST", Double.class, expression.as(String.class));
+
+            switch (op) {
+                case ">=":
+                    return cb.greaterThanOrEqualTo(numericExpression, val);
+                case "<=":
+                    return cb.lessThanOrEqualTo(numericExpression, val);
+                case "=":
+                    return cb.equal(numericExpression, val);
+                case ">":
+                    return cb.greaterThan(numericExpression, val);
+                case "<":
+                    return cb.lessThan(numericExpression, val);
+                default:
+                    return null;
+            }
+        };
+    }
+}

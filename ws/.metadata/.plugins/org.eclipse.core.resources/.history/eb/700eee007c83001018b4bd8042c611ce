@@ -1,0 +1,81 @@
+package com.securin.recipes.service;
+
+import com.securin.recipes.dto.PageResponse;
+import com.securin.recipes.dto.RecipeDto;
+import com.securin.recipes.dto.SearchRequest;
+import com.securin.recipes.entity.Recipe;
+import com.securin.recipes.repository.RecipeRepository;
+import com.securin.recipes.util.OpValue;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+
+@Service
+@RequiredArgsConstructor
+public class RecipeService {
+  private final RecipeRepository repo;
+  private final EntityManager em;
+
+  public PageResponse<RecipeDto> list(int page, int limit) {
+    page = Math.max(page, 1);
+    limit = Math.min(Math.max(limit, 1), 100);
+    Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "rating"));
+    Page<Recipe> p = repo.findAll(pageable);
+    List<RecipeDto> data = p.getContent().stream().map(RecipeDto::from).toList();
+    return new PageResponse<>(page, limit, p.getTotalElements(), data);
+  }
+
+  @Transactional(readOnly = true)
+  public List<RecipeDto> search(SearchRequest req, int limit) {
+    StringBuilder sql = new StringBuilder("""
+
+      SELECT id, cuisine, title, rating, prep_time, cook_time, total_time, description, nutrients, serves
+      FROM recipes WHERE 1=1
+      """);
+    Map<String, Object> params = new HashMap<>();
+
+    if (req.cuisine() != null && !req.cuisine().isBlank()) {
+      sql.append(" AND cuisine = :cuisine");
+      params.put("cuisine", req.cuisine());
+    }
+    if (req.title() != null && !req.title().isBlank()) {
+      sql.append(" AND LOWER(title) LIKE :title");
+      params.put("title", "%" + req.title().toLowerCase() + "%");
+    }
+    if (req.total_time() != null) {
+      OpValue ov = OpValue.parse(req.total_time());
+      if (ov != null) {
+        sql.append(" AND total_time ").append(ov.op()).append(" :tt");
+        params.put("tt", Integer.parseInt(ov.value()));
+      }
+    }
+    if (req.rating() != null) {
+      OpValue ov = OpValue.parse(req.rating());
+      if (ov != null) {
+        sql.append(" AND rating ").append(ov.op()).append(" :rt");
+        params.put("rt", Double.parseDouble(ov.value()));
+      }
+    }
+    if (req.calories() != null) {
+      OpValue ov = OpValue.parse(req.calories());
+      if (ov != null) {
+        // Extract numeric prefix from JSON calories like "389 kcal" using MySQL 8 REGEXP_REPLACE
+        sql.append(" AND CAST(NULLIF(REGEXP_REPLACE(JSON_UNQUOTE(JSON_EXTRACT(nutrients, '$.calories')), '\\\\D.*$', ''), '') AS DECIMAL(10,2)) ")
+           .append(ov.op()).append(" :cal");
+        params.put("cal", Double.parseDouble(ov.value()));
+      }
+    }
+
+    sql.append(" ORDER BY rating DESC, id ASC");
+    Query q = em.createNativeQuery(sql.toString(), Recipe.class).setMaxResults(Math.min(Math.max(limit, 1), 1000));
+    params.forEach(q::setParameter);
+    @SuppressWarnings("unchecked")
+    List<Recipe> list = q.getResultList();
+    return list.stream().map(RecipeDto::from).toList();
+  }
+}

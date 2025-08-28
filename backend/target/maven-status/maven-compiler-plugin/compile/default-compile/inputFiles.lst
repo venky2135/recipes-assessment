@@ -1,0 +1,11 @@
+C:\Receipes\backend\src\main\java\com\securin\recipes\dto\SearchRequest.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\RecipesApplication.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\models\PageResponse.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\util\OpValue.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\config\JacksonConfig.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\dto\RecipeDto.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\models\Recipe.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\controller\RecipeController.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\repository\RecipeRepository.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\util\RecipeDataLoader.java
+C:\Receipes\backend\src\main\java\com\securin\recipes\service\RecipeService.java

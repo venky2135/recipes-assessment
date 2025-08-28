@@ -1,0 +1,46 @@
+package com.securin.recipes.models;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.Type;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+
+@Entity
+@Table(name = "recipes")
+@Data
+public class Recipe {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "cuisine", length = 100)
+    private String cuisine;
+
+    @Column(name = "title", length = 255)
+    private String title;
+
+    @Column(name = "rating")
+    private Float rating;
+
+    @Column(name = "prep_time")
+    private Integer prep_time;
+
+    @Column(name = "cook_time")
+    private Integer cook_time;
+
+    @Column(name = "total_time")
+    private Integer total_time;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Type(JsonType.class)
+    @Column(name = "nutrients", columnDefinition = "JSONB")
+    private Object nutrients;
+
+    @Column(name = "serves", length = 50)
+    private String serves;
+
+    // You can add a default constructor if needed
+    public Recipe() {}
+}

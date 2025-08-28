@@ -1,0 +1,50 @@
+package com.securin.recipes.dto;
+
+import com.securin.recipes.entity.Recipe;
+import lombok.*;
+
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RecipeDto {
+    private Long id;
+    private String contient;
+    private String countryState;
+    private String cuisine;
+    private String title;
+    private String url;
+    private Double rating;
+    private Integer totalTime;
+    private Integer prepTime;
+    private Integer cookTime;
+    private String description;
+    private List<String> ingredients;
+    private List<String> instructions;
+
+    // Keep Object here to match entity (can be Map, Number, or null)
+    private Object nutrients;
+
+    public static RecipeDto fromEntity(Recipe entity) {
+        if (entity == null) return null;
+        return RecipeDto.builder()
+                .id(entity.getId())
+                .contient(entity.getContient())
+                .countryState(entity.getCountryState())
+                .cuisine(entity.getCuisine())
+                .title(entity.getTitle())
+                .url(entity.getUrl())
+                .rating(entity.getRating())
+                .totalTime(entity.getTotalTime())
+                .prepTime(entity.getPrepTime())
+                .cookTime(entity.getCookTime())
+                .description(entity.getDescription())
+                .ingredients(entity.getIngredients())
+                .instructions(entity.getInstructions())
+                .nutrients(entity.getNutrients()) // <-- flexible
+                .build();
+    }
+}

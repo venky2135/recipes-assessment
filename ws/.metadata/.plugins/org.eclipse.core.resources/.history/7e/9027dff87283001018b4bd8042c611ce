@@ -1,0 +1,38 @@
+package com.securin.recipes.entity;
+
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Type;
+import java.util.Map;
+
+@Entity @Table(name="recipes")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Recipe {
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String cuisine;
+  private String title;
+
+  @Column(columnDefinition = "double")
+  private Double rating;
+
+  @Column(name="prep_time")
+  private Integer prepTime;
+
+  @Column(name="cook_time")
+  private Integer cookTime;
+
+  @Column(name="total_time")
+  private Integer totalTime;
+
+  @Column(columnDefinition = "text")
+  private String description;
+
+  @Type(JsonType.class)
+  @Column(columnDefinition = "json")
+  private Map<String, Object> nutrients;
+
+  private String serves;
+}

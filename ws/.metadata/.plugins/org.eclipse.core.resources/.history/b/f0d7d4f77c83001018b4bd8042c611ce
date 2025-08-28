@@ -1,0 +1,54 @@
+package com.securin.recipes.util;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securin.recipes.entity.Recipe;
+import com.securin.recipes.repository.RecipeRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Component
+public class RecipeDataLoader implements CommandLineRunner {
+
+    private final RecipeRepository recipeRepository;
+    private final ObjectMapper mapper;
+
+    public RecipeDataLoader(RecipeRepository recipeRepository) {
+        this.recipeRepository = recipeRepository;
+        this.mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (recipeRepository.count() > 0) {
+            return; // already loaded
+        }
+
+        InputStream inputStream = new ClassPathResource("data/US_recipes.json").getInputStream();
+        Map<String, Recipe> recipeMap = mapper.readValue(inputStream,
+                new TypeReference<Map<String, Recipe>>() {});
+
+        List<Recipe> recipes = recipeMap.values().stream()
+                .map(this::sanitize)
+                .collect(Collectors.toList());
+
+        recipeRepository.saveAll(recipes);
+    }
+
+    private Recipe sanitize(Recipe recipe) {
+        if (recipe.getRating() != null) {
+            if (recipe.getRating().isNaN() || recipe.getRating().isInfinite()) {
+                recipe.setRating(null);
+            }
+        }
+        return recipe;
+    }
+}

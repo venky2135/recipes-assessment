@@ -1,0 +1,44 @@
+package com.securin.recipes.entity;
+
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.Map;
+
+@Entity
+@Table(name = "recipes")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Recipe {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String cuisine;
+
+    private String title;
+
+    private Double rating;
+
+    private String prepTime;
+
+    private String cookTime;
+
+    private String totalTime;
+
+    @Column(length = 2000)
+    private String description;
+
+    // ✅ Correct usage of Hibernate's JsonType
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> nutrients;
+
+    private Integer serves;
+}

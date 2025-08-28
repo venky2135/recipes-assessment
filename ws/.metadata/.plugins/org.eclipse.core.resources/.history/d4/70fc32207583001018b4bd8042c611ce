@@ -1,0 +1,5 @@
+package com.securin.recipes.util;
+
+public class NutrientsConverter {
+
+}

@@ -1,0 +1,68 @@
+package com.securin.recipes.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
+import java.util.Map;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true) // ignore anything not mapped
+public class Recipe {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // extra JSON fields
+    @JsonProperty("Contient")
+    private String continent;
+
+    @JsonProperty("Country_State")
+    private String countryState;
+
+    @JsonProperty("URL")
+    private String url;
+
+    private String cuisine;
+    private String title;
+    private Double rating;
+
+    @JsonProperty("prep_time")
+    private Integer prepTime;   // store as minutes
+
+    @JsonProperty("cook_time")
+    private Integer cookTime;
+
+    @JsonProperty("total_time")
+    private Integer totalTime;
+
+    private String description;
+
+    // arrays
+    @ElementCollection
+    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "ingredient")
+    private List<String> ingredients;
+
+    @ElementCollection
+    @CollectionTable(name = "recipe_instructions", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "instruction")
+    private List<String> instructions;
+
+    // nutrients (map from JSON)
+    @ElementCollection
+    @CollectionTable(name = "recipe_nutrients", joinColumns = @JoinColumn(name = "recipe_id"))
+    @MapKeyColumn(name = "nutrient")
+    @Column(name = "value")
+    private Map<String, Object> nutrients;
+
+    private Integer serves;
+}

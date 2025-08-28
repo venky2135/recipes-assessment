@@ -1,0 +1,46 @@
+package com.securin.recipes.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "recipes")
+@Data
+public class Recipe {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String cuisine;
+
+    private String title;
+
+    private Double rating;
+
+    private Integer prepTime;
+
+    private Integer cookTime;
+
+    private Integer totalTime;
+
+    private String description;
+
+    private String serves;
+
+    @Column(columnDefinition = "jsonb")
+    private String nutrients;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "ingredient", columnDefinition = "TEXT")
+    private List<String> ingredients = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "recipe_instructions", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "instruction", columnDefinition = "TEXT")
+    private List<String> instructions = new ArrayList<>();
+}

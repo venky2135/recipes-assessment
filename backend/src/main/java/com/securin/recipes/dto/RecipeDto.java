@@ -1,0 +1,40 @@
+package com.securin.recipes.dto;
+
+import com.securin.recipes.entity.Recipe;
+import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
+
+@Data
+public class RecipeDto {
+    private Long id;
+    private String cuisine;
+    private String title;
+    private Double rating;
+    private Integer prepTime;
+    private Integer cookTime;
+    private Integer totalTime;
+    private String description;
+    private String serves;
+    private Map<String, Object> nutrients;   // FIX: match entity
+    private List<String> ingredients;
+    private List<String> instructions;
+
+    // Mapper
+    public static RecipeDto fromEntity(Recipe recipe) {
+        RecipeDto dto = new RecipeDto();
+        dto.setId(recipe.getId());
+        dto.setCuisine(recipe.getCuisine());
+        dto.setTitle(recipe.getTitle());
+        dto.setRating(recipe.getRating());
+        dto.setPrepTime(recipe.getPrepTime());
+        dto.setCookTime(recipe.getCookTime());
+        dto.setTotalTime(recipe.getTotalTime());
+        dto.setDescription(recipe.getDescription());
+        dto.setServes(recipe.getServes());
+        dto.setIngredients(recipe.getIngredients());
+        dto.setInstructions(recipe.getInstructions());
+        return dto;
+    }
+}

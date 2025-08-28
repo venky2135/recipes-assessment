@@ -1,0 +1,65 @@
+package com.securin.recipes.util;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securin.recipes.entity.Recipe;
+import com.securin.recipes.repository.RecipeRepository;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+public class RecipeDataLoader {
+
+    private final RecipeRepository recipeRepository;
+
+    @PostConstruct
+    public void loadData() {
+        try {
+            if (recipeRepository.count() == 0) {
+                ObjectMapper mapper = new ObjectMapper();
+
+                // Read JSON file
+                InputStream inputStream = getClass().getResourceAsStream("/US_recipes.json");
+                List<Map<String, Object>> recipes = mapper.readValue(
+                        inputStream,
+                        new TypeReference<List<Map<String, Object>>>() {}
+                );
+
+                for (Map<String, Object> r : recipes) {
+                    // ✅ Handle NaN -> null
+                    Object ratingVal = r.get("rating");
+                    Double rating = null;
+                    if (ratingVal instanceof Number) {
+                        rating = ((Number) ratingVal).doubleValue();
+                        if (rating.isNaN()) {
+                            rating = null;
+                        }
+                    }
+
+                    Recipe recipe = Recipe.builder()
+                            .cuisine((String) r.get("cuisine"))
+                            .title((String) r.get("title"))
+                            .rating(rating)
+                            .prepTime(r.get("prepTime") != null ? r.get("prepTime").toString() : null)
+                            .cookTime(r.get("cookTime") != null ? r.get("cookTime").toString() : null)
+                            .totalTime(r.get("totalTime") != null ? r.get("totalTime").toString() : null)
+                            .description((String) r.get("description"))
+                            .nutrients((Map<String, Object>) r.get("nutrients"))
+                            .serves(r.get("serves") instanceof Number ? ((Number) r.get("serves")).intValue() : null)
+                            .build();
+
+                    recipeRepository.save(recipe);
+                }
+                System.out.println("✅ Recipes loaded successfully into DB.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
